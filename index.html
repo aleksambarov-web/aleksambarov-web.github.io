@@ -10,7 +10,7 @@
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            color: #000000;
             display: flex;
             min-height: 100vh;
             overflow-x: hidden;
@@ -123,7 +123,9 @@
             align-items: center;
             gap: 14px;
             margin-bottom: 10px;
-            color: var(--tg-theme-text-color, #000000);
+            color: #000000;
+            position: relative;
+            z-index: 1001;
         }
         .sidebar-item:hover { background-color: rgba(51, 144, 236, 0.1); }
         .sidebar-item.active { 
@@ -144,6 +146,8 @@
             flex: 1;
             padding: 24px;
             transition: margin-left 0.3s;
+            position: relative;
+            z-index: 1;
         }
         
         .header { margin-bottom: 24px; }
@@ -186,15 +190,15 @@
             border: 1px solid rgba(51, 144, 236, 0.15);
         }
         .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 14px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 8px; font-weight: 600; }
+        label { display: block; font-size: 14px; color: #555555; margin-bottom: 8px; font-weight: 600; }
         input {
             width: 100%; 
             padding: 14px 16px;
             border: 2px solid transparent;
             border-radius: 14px; 
             font-size: 15px;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: var(--tg-theme-text-color, #000000);
+            background-color: #ffffff;
+            color: #000000;
             transition: all 0.3s;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
@@ -202,6 +206,9 @@
             outline: none; 
             border-color: #3390ec;
             box-shadow: 0 4px 15px rgba(51, 144, 236, 0.25);
+        }
+        input::placeholder {
+            color: #999999;
         }
         button.action-btn {
             width: 100%; 
@@ -254,7 +261,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .account-preview { font-size: 14px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 14px; }
+        .account-preview { font-size: 14px; color: #666666; margin-bottom: 14px; }
         .account-actions { display: flex; gap: 10px; }
         .account-actions button {
             flex: 1; 
@@ -311,7 +318,7 @@
             align-items: center;
             margin-bottom: 8px;
         }
-        .detail-label { font-size: 13px; color: var(--tg-theme-hint-color, #666666); font-weight: 600; }
+        .detail-label { font-size: 13px; color: #666666; font-weight: 600; }
         .copy-field-btn {
             padding: 8px 14px;
             background: linear-gradient(135deg, #44aa44, #3d993d);
@@ -332,6 +339,7 @@
             word-break: break-all;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             border: 1px solid rgba(51, 144, 236, 0.1);
+            color: #000000;
         }
         .modal-buttons { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
         .modal-buttons button {
@@ -346,7 +354,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         .modal-buttons button:active { transform: scale(0.95); }
-        .empty-state { text-align: center; padding: 60px 20px; color: var(--tg-theme-hint-color, #666666); }
+        .empty-state { text-align: center; padding: 60px 20px; color: #666666; }
         .delete-btn { background: linear-gradient(135deg, #ff4444, #e63e3e); color: white; }
         .copy-btn { background: linear-gradient(135deg, #44aa44, #3d993d); color: white; }
         .sell-btn { background: linear-gradient(135deg, #ff8800, #e67a00); color: white; }
@@ -378,7 +386,7 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(51, 144, 236, 0.15);
         }
-        .stats-label { font-size: 14px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 10px; font-weight: 600; }
+        .stats-label { font-size: 14px; color: #666666; margin-bottom: 10px; font-weight: 600; }
         .stats-value { 
             font-size: 30px; 
             font-weight: 800; 
@@ -405,7 +413,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            color: var(--tg-theme-text-color, #000000);
+            color: #000000;
         }
         .filter-btn:hover {
             border-color: #3390ec;
@@ -436,7 +444,7 @@
             position: relative;
             box-shadow: 0 4px 15px rgba(51, 144, 236, 0.4);
         }
-        .chart-label { font-size: 12px; text-align: center; margin-top: 10px; color: var(--tg-theme-hint-color, #666666); font-weight: 600; }
+        .chart-label { font-size: 12px; text-align: center; margin-top: 10px; color: #666666; font-weight: 600; }
         .chart-value {
             position: absolute; top: -26px; left: 50%;
             transform: translateX(-50%); font-size: 12px;
@@ -681,7 +689,10 @@
             document.querySelector('.sidebar-item[data-tab="' + tabName + '"]').classList.add('active');
             
             currentTab = tabName;
-            closeSidebar();
+            
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
             
             if (tabName === 'list') renderAccounts();
             if (tabName === 'sold') renderSoldAccounts();
@@ -976,4 +987,17 @@
             if (window.innerWidth <= 768) {
                 const sidebar = document.getElementById('sidebar');
                 const btn = document.querySelector('.mobile-menu-btn');
-                if (!sidebar.contains(e.target) && !btn.contains(e.target))
+                if (!sidebar.contains(e.target) && !btn.contains(e.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        (async () => {
+            await loadData();
+            renderAccounts();
+            updateHeaderStats();
+        })();
+    </script>
+</body>
+</html>
