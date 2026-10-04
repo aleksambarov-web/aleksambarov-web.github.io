@@ -814,13 +814,16 @@
 
             await saveData();
             
+            // Очищаем все поля
             document.getElementById('gamePassword').value = '';
             document.getElementById('gameEmail').value = '';
             document.getElementById('emailPassword').value = '';
             document.getElementById('lotName').value = '';
             document.getElementById('price').value = '';
 
-            tg.showAlert('✅ Аккаунт сохранён!');
+            // Показываем уведомление
+            tg.showAlert('✅ Аккаунт успешно сохранён!');
+            
             renderAccounts();
         }
 
