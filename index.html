@@ -939,17 +939,24 @@
                 }
                 
                 log('Сохранение: ' + accounts.length + ' аккаунтов, ' + soldAccounts.length + ' проданных');
-                tg.CloudStorage.setItems({
-                    'xxxgl_accounts': JSON.stringify(accounts),
-                    'xxxgl_sold': JSON.stringify(soldAccounts)
-                }, (err) => {
+                
+                // ИСПРАВЛЕНО: setItem вместо setItems
+                tg.CloudStorage.setItem('xxxgl_accounts', JSON.stringify(accounts), (err) => {
                     if (err) {
-                        log('Ошибка сохранения: ' + err, 'error');
+                        log('Ошибка сохранения accounts: ' + err, 'error');
                         reject(err);
-                    } else {
-                        log('Данные сохранены успешно!', 'success');
-                        resolve();
+                        return;
                     }
+                    
+                    tg.CloudStorage.setItem('xxxgl_sold', JSON.stringify(soldAccounts), (err) => {
+                        if (err) {
+                            log('Ошибка сохранения sold: ' + err, 'error');
+                            reject(err);
+                        } else {
+                            log('Данные сохранены успешно!', 'success');
+                            resolve();
+                        }
+                    });
                 });
             });
         }
@@ -1209,71 +1216,3 @@
             tg.showConfirm('💰 Продать?', async ok => {
                 if (ok) {
                     accounts[currentAccountId].soldAt = new Date().toISOString();
-                    soldAccounts.unshift(accounts[currentAccountId]);
-                    accounts.splice(currentAccountId, 1);
-                    await saveData();
-                    closeModal();
-                    renderAccounts();
-                    tg.showAlert('✅ Продан!');
-                }
-            });
-        }
-
-        async function deleteFromList(index) {
-            tg.showConfirm('🗑️ Удалить?', async ok => {
-                if (ok) {
-                    if (currentTab === 'list') {
-                        accounts.splice(index, 1);
-                    } else {
-                        soldAccounts.splice(index, 1);
-                    }
-                    await saveData();
-                    if (currentTab === 'list') renderAccounts();
-                    else renderSoldAccounts();
-                    closeModal();
-                    tg.showAlert('🗑️ Удалено!');
-                }
-            });
-        }
-
-        async function deleteCurrentAccount() {
-            if (currentAccountId === null) return;
-            tg.showConfirm('🗑️ Удалить?', async ok => {
-                if (ok) {
-                    if (currentTab === 'list') {
-                        accounts.splice(currentAccountId, 1);
-                    } else {
-                        soldAccounts.splice(currentAccountId, 1);
-                    }
-                    await saveData();
-                    if (currentTab === 'list') renderAccounts();
-                    else renderSoldAccounts();
-                    closeModal();
-                    tg.showAlert('🗑️ Удалено!');
-                }
-            });
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        document.addEventListener('click', e => {
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                const btn = document.querySelector('.mobile-menu-btn');
-                if (!sidebar.contains(e.target) && !btn.contains(e.target)) {
-                    closeSidebar();
-                }
-            }
-        });
-
-        (async () => {
-            await loadData();
-            updateHeaderStats();
-        })();
-    </script>
-</body>
-</html>
