@@ -38,7 +38,7 @@
             display: none;
             position: fixed;
             top: 16px; left: 16px;
-            z-index: 1001;
+            z-index: 1002;
             width: 44px; height: 44px;
             background: linear-gradient(135deg, #3390ec, #8b5cf6);
             border-radius: 12px;
@@ -81,7 +81,7 @@
             overflow-y: auto;
             border-right: 1px solid rgba(51, 144, 236, 0.2);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            z-index: 1001;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .sidebar-header {
@@ -125,7 +125,7 @@
             margin-bottom: 10px;
             color: #000000;
             position: relative;
-            z-index: 1001;
+            z-index: 1002;
         }
         .sidebar-item:hover { background-color: rgba(51, 144, 236, 0.1); }
         .sidebar-item.active { 
@@ -572,6 +572,24 @@
         }
         .start-btn:active { transform: scale(0.95); }
         
+        .debug-panel {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-family: monospace;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 9999;
+            display: none;
+        }
+        .debug-panel.visible { display: block; }
+        
         @media (max-width: 768px) {
             .mobile-menu-btn { display: flex; }
             .sidebar { transform: translateX(-100%); }
@@ -786,6 +804,8 @@
         </div>
     </div>
     
+    <div class="debug-panel" id="debugPanel"></div>
+    
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
@@ -797,9 +817,23 @@
         let listFolderFilter = null;
         let soldFolderFilter = null;
         let dateFilter = 0;
+        let debugMode = true;
+
+        function log(message, type = 'info') {
+            const panel = document.getElementById('debugPanel');
+            const time = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff4444' : (type === 'success' ? '#44aa44' : '#00ff00');
+            panel.innerHTML += `<div style="color: ${color};">[${time}] ${message}</div>`;
+            panel.scrollTop = panel.scrollHeight;
+            console.log(message);
+        }
 
         function enterApp() {
             document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('debugPanel').classList.add('visible');
+            log('Telegram WebApp: ' + (tg ? 'OK' : 'ERROR'), tg ? 'success' : 'error');
+            log('Bot API Version: ' + (tg.version || 'unknown'));
+            log('CloudStorage: ' + (tg.CloudStorage ? 'OK' : 'ERROR'), tg.CloudStorage ? 'success' : 'error');
             switchTab('home');
         }
 
@@ -870,38 +904,50 @@
             renderSoldAccounts();
         }
 
-        // ИСПРАВЛЕННАЯ ЗАГРУЗКА
         async function loadData() {
             return new Promise((resolve) => {
+                if (!tg.CloudStorage) {
+                    log('CloudStorage НЕ доступен!', 'error');
+                    accounts = [];
+                    soldAccounts = [];
+                    resolve();
+                    return;
+                }
+                
+                log('Загрузка данных...');
                 tg.CloudStorage.getItems(['xxxgl_accounts', 'xxxgl_sold'], (err, result) => {
-                    console.log('Загрузка данных...', err, result);
                     if (err) {
-                        console.error('Ошибка загрузки:', err);
+                        log('Ошибка загрузки: ' + err, 'error');
                         accounts = [];
                         soldAccounts = [];
                     } else {
                         accounts = result['xxxgl_accounts'] ? JSON.parse(result['xxxgl_accounts']) : [];
                         soldAccounts = result['xxxgl_sold'] ? JSON.parse(result['xxxgl_sold']) : [];
-                        console.log('Загружено аккаунтов:', accounts.length, 'Проданных:', soldAccounts.length);
+                        log('Загружено: ' + accounts.length + ' аккаунтов, ' + soldAccounts.length + ' проданных', 'success');
                     }
                     resolve();
                 });
             });
         }
 
-        // ИСПРАВЛЕННОЕ СОХРАНЕНИЕ
         async function saveData() {
             return new Promise((resolve, reject) => {
-                console.log('Сохранение данных...', accounts.length, soldAccounts.length);
+                if (!tg.CloudStorage) {
+                    log('CloudStorage НЕ доступен для сохранения!', 'error');
+                    reject('CloudStorage недоступен');
+                    return;
+                }
+                
+                log('Сохранение: ' + accounts.length + ' аккаунтов, ' + soldAccounts.length + ' проданных');
                 tg.CloudStorage.setItems({
                     'xxxgl_accounts': JSON.stringify(accounts),
                     'xxxgl_sold': JSON.stringify(soldAccounts)
                 }, (err) => {
                     if (err) {
-                        console.error('Ошибка сохранения:', err);
+                        log('Ошибка сохранения: ' + err, 'error');
                         reject(err);
                     } else {
-                        console.log('Данные сохранены успешно!');
+                        log('Данные сохранены успешно!', 'success');
                         resolve();
                     }
                 });
@@ -1068,8 +1114,8 @@
                 tg.showAlert('✅ Аккаунт успешно сохранён!');
                 showAllList();
             } catch (err) {
-                console.error('Ошибка:', err);
-                tg.showAlert('❌ Ошибка сохранения!');
+                log('Критическая ошибка: ' + err, 'error');
+                tg.showAlert('❌ Ошибка сохранения: ' + err);
             }
         }
 
