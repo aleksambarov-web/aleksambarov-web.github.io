@@ -455,6 +455,15 @@
             min-height: 60vh;
             text-align: center;
         }
+        .about-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #3390ec;
+            box-shadow: 0 8px 30px rgba(51, 144, 236, 0.4);
+            margin-bottom: 20px;
+        }
         .about-tg {
             font-size: 28px;
             font-weight: 800;
@@ -615,6 +624,7 @@
         <div id="aboutTab" class="content">
             <div class="about-content">
                 <h1 class="header-title" style="text-align: center;">ℹ️ О приложении</h1>
+                <img src="https://i.pinimg.com/736x/58/c6/51/58c651bfb83c890c3250f8ee47ff370d.jpg" alt="Contact" class="about-avatar">
                 <div class="about-tg">https://t.me/sforsik</div>
                 <a href="https://t.me/sforsik" class="about-link" target="_blank">✈️ Написать в Telegram</a>
             </div>
@@ -966,17 +976,4 @@
             if (window.innerWidth <= 768) {
                 const sidebar = document.getElementById('sidebar');
                 const btn = document.querySelector('.mobile-menu-btn');
-                if (!sidebar.contains(e.target) && !btn.contains(e.target)) {
-                    closeSidebar();
-                }
-            }
-        });
-
-        (async () => {
-            await loadData();
-            renderAccounts();
-            updateHeaderStats();
-        })();
-    </script>
-</body>
-</html>
+                if (!sidebar.contains(e.target) && !btn.contains(e.target))
