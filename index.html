@@ -226,6 +226,51 @@
         }
         button.action-btn:active { transform: scale(0.98); }
         
+        .folder-select {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .folder-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 14px;
+            background: linear-gradient(135deg, rgba(240, 240, 240, 0.9), rgba(232, 232, 232, 0.85));
+            border: 2px solid rgba(51, 144, 236, 0.2);
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #000000;
+        }
+        .folder-btn:hover {
+            border-color: #3390ec;
+            transform: translateY(-2px);
+        }
+        .folder-btn.active {
+            background: linear-gradient(135deg, #3390ec, #8b5cf6);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(51, 144, 236, 0.4);
+        }
+        
+        .back-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #888888, #666666);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .back-btn:active { transform: scale(0.98); }
+        
         .accounts-list { margin-top: 12px; }
         .account-card {
             background: linear-gradient(135deg, rgba(240, 240, 240, 0.95), rgba(232, 232, 232, 0.9));
@@ -599,8 +644,14 @@
         
         <div id="soldTab" class="content">
             <h1 class="header-title">✅ Архив проданных</h1>
+            <div id="soldFolderSelect" class="folder-select">
+                <button class="folder-btn" onclick="showSoldFolder('Genshin')">🎮 Genshin</button>
+                <button class="folder-btn" onclick="showSoldFolder('HSR')">🚂 HSR</button>
+                <button class="folder-btn" onclick="showSoldFolder('Honkai')">⚔️ Honkai</button>
+            </div>
+            <button class="back-btn" id="backToFolders" onclick="showAllSold()" style="display: none;">⬅️ Назад к папкам</button>
             <div id="soldList" class="accounts-list">
-                <div class="empty-state">Нет проданных лотов<br><br>Проданные аккаунты появятся здесь</div>
+                <div class="empty-state">Выберите папку выше<br><br>Проданные аккаунты появятся здесь</div>
             </div>
         </div>
         
@@ -683,6 +734,7 @@
         let currentAccountId = null;
         let currentTab = 'list';
         let dateFilter = 0;
+        let soldFolderFilter = null;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
@@ -717,9 +769,23 @@
             }
             
             if (tabName === 'list') renderAccounts();
-            if (tabName === 'sold') renderSoldAccounts();
+            if (tabName === 'sold') { showAllSold(); }
             if (tabName === 'stats') renderStats();
             updateHeaderStats();
+        }
+
+        function showSoldFolder(folder) {
+            soldFolderFilter = folder;
+            document.getElementById('soldFolderSelect').style.display = 'none';
+            document.getElementById('backToFolders').style.display = 'inline-block';
+            renderSoldAccounts();
+        }
+
+        function showAllSold() {
+            soldFolderFilter = null;
+            document.getElementById('soldFolderSelect').style.display = 'flex';
+            document.getElementById('backToFolders').style.display = 'none';
+            renderSoldAccounts();
         }
 
         async function loadData() {
@@ -757,10 +823,16 @@
         }
 
         function getFilteredSold() {
-            if (dateFilter === 0) return soldAccounts;
-            const now = Date.now();
-            const cutoff = now - (dateFilter * 24 * 60 * 60 * 1000);
-            return soldAccounts.filter(acc => new Date(acc.soldAt).getTime() >= cutoff);
+            let filtered = soldAccounts;
+            if (dateFilter !== 0) {
+                const now = Date.now();
+                const cutoff = now - (dateFilter * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(acc => new Date(acc.soldAt).getTime() >= cutoff);
+            }
+            if (soldFolderFilter) {
+                filtered = filtered.filter(acc => acc.folder === soldFolderFilter);
+            }
+            return filtered;
         }
 
         function renderAccounts() {
@@ -787,20 +859,26 @@
 
         function renderSoldAccounts() {
             const container = document.getElementById('soldList');
-            if (soldAccounts.length === 0) {
-                container.innerHTML = '<div class="empty-state">Нет проданных лотов<br><br>Проданные аккаунты появятся здесь</div>';
+            const filtered = getFilteredSold();
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state">' + (soldFolderFilter ? 'Нет проданных в этой папке' : 'Нет проданных лотов<br><br>Проданные аккаунты появятся здесь') + '</div>';
                 return;
             }
-            container.innerHTML = soldAccounts.map((acc, index) => `
-                <div class="sold-card">
-                    <div class="sold-title">✅ ${acc.folder || 'Genshin'} | ${escapeHtml(acc.lotName)}</div>
-                    <div class="account-preview">💰 ${escapeHtml(acc.price)} | 📅 ${new Date(acc.soldAt).toLocaleDateString()}</div>
-                    <div class="account-actions">
-                        <button class="btn-view" onclick="viewAccount(${index}, 'sold')">👁️ Просмотр</button>
-                        <button class="btn-delete" onclick="deleteFromList(${index})">🗑️ Удалить</button>
+            
+            container.innerHTML = filtered.map((acc, index) => {
+                const realIndex = soldAccounts.indexOf(acc);
+                return `
+                    <div class="sold-card">
+                        <div class="sold-title">✅ ${acc.folder || 'Genshin'} | ${escapeHtml(acc.lotName)}</div>
+                        <div class="account-preview">💰 ${escapeHtml(acc.price)} | 📅 ${new Date(acc.soldAt).toLocaleDateString()}</div>
+                        <div class="account-actions">
+                            <button class="btn-view" onclick="viewAccount(${realIndex}, 'sold')">👁️ Просмотр</button>
+                            <button class="btn-delete" onclick="deleteFromList(${realIndex})">🗑️ Удалить</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function renderStats() {
@@ -990,7 +1068,9 @@
                     }
                     await saveData();
                     if (currentTab === 'list') renderAccounts();
-                    else renderSoldAccounts();
+                    else {
+                        renderSoldAccounts();
+                    }
                     closeModal();
                     tg.showAlert('🗑️ Удалено!');
                 }
