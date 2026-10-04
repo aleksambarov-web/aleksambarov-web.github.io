@@ -609,13 +609,13 @@
         <div class="sidebar-item" data-tab="add" onclick="switchTab('add')">
             <span>➕</span> Добавить
         </div>
-        <div class="sidebar-item" data-tab="list" onclick="switchTab('list')">
+        <div class="sidebar-item active" data-tab="list" onclick="switchTab('list')">
             <span>📋</span> Аккаунты
         </div>
         <div class="sidebar-item" data-tab="sold" onclick="switchTab('sold')">
             <span>✅</span> Архив
         </div>
-        <div class="sidebar-item active" data-tab="stats" onclick="switchTab('stats')">
+        <div class="sidebar-item" data-tab="stats" onclick="switchTab('stats')">
             <span>📊</span> Статистика
         </div>
         <div class="sidebar-divider"></div>
@@ -718,7 +718,7 @@
                 </div>
             </div>
             
-            <div class="stats-container">
+            <div class="stats-container" style="margin-top: 20px;">
                 <div class="stats-card">
                     <div class="stats-label">📋 На продаже</div>
                     <div class="stats-value" id="forSaleCount">0</div>
@@ -793,10 +793,10 @@
         let accounts = [];
         let soldAccounts = [];
         let currentAccountId = null;
-        let currentTab = 'stats';
-        let dateFilter = 0;
+        let currentTab = 'list';
         let listFolderFilter = null;
         let soldFolderFilter = null;
+        let dateFilter = 0;
 
         function enterApp() {
             document.getElementById('startScreen').classList.add('hidden');
@@ -870,27 +870,42 @@
             renderSoldAccounts();
         }
 
+        // ИСПРАВЛЕННОЕ СОХРАНЕНИЕ - используем setItems вместо setItem
         async function loadData() {
             return new Promise(resolve => {
-                tg.CloudStorage.getItems(['game_accounts', 'sold_accounts'], (err, result) => {
-                    if (err || !result) {
+                tg.CloudStorage.getItems(['xxxgl_accounts', 'xxxgl_sold'], (err, result) => {
+                    if (err) {
+                        console.error('Ошибка загрузки:', err);
                         accounts = [];
                         soldAccounts = [];
                     } else {
-                        accounts = result['game_accounts'] ? JSON.parse(result['game_accounts']) : [];
-                        soldAccounts = result['sold_accounts'] ? JSON.parse(result['sold_accounts']) : [];
+                        accounts = result['xxxgl_accounts'] ? JSON.parse(result['xxxgl_accounts']) : [];
+                        soldAccounts = result['xxxgl_sold'] ? JSON.parse(result['xxxgl_sold']) : [];
+                        console.log('Загружено аккаунтов:', accounts.length);
+                        console.log('Загружено проданных:', soldAccounts.length);
                     }
                     resolve();
                 });
             });
         }
 
+        // ИСПРАВЛЕННОЕ СОХРАНЕНИЕ - используем setItems
         async function saveData() {
-            tg.CloudStorage.setItems({
-                'game_accounts': JSON.stringify(accounts),
-                'sold_accounts': JSON.stringify(soldAccounts)
+            return new Promise((resolve, reject) => {
+                tg.CloudStorage.setItems({
+                    'xxxgl_accounts': JSON.stringify(accounts),
+                    'xxxgl_sold': JSON.stringify(soldAccounts)
+                }, (err) => {
+                    if (err) {
+                        console.error('Ошибка сохранения:', err);
+                        reject(err);
+                    } else {
+                        console.log('Сохранено аккаунтов:', accounts.length);
+                        console.log('Сохранено проданных:', soldAccounts.length);
+                        resolve();
+                    }
+                });
             });
-            updateHeaderStats();
         }
 
         function setFilter(days) {
@@ -981,17 +996,16 @@
             }, 0);
             
             const totalAll = soldAccounts.reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
+            const forSaleTotal = accounts.reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
             const genshin = soldAccounts.filter(a => a.folder === 'Genshin').reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
             const hsr = soldAccounts.filter(a => a.folder === 'HSR').reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
             const honkai = soldAccounts.filter(a => a.folder === 'Honkai').reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
             
-            const forSaleTotal = accounts.reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
-            
             document.getElementById('totalEarnings').textContent = totalAll.toLocaleString() + ' ₽';
             document.getElementById('totalSold').textContent = soldAccounts.length;
-            document.getElementById('periodEarnings').textContent = total.toLocaleString() + ' ₽';
             document.getElementById('forSaleCount').textContent = accounts.length;
             document.getElementById('forSaleValue').textContent = forSaleTotal.toLocaleString() + ' ₽';
+            document.getElementById('periodEarnings').textContent = total.toLocaleString() + ' ₽';
             document.getElementById('genshinStats').textContent = genshin.toLocaleString() + ' ₽';
             document.getElementById('hsrStats').textContent = hsr.toLocaleString() + ' ₽';
             document.getElementById('honkaiStats').textContent = honkai.toLocaleString() + ' ₽';
@@ -1042,16 +1056,20 @@
                 createdAt: new Date().toISOString()
             });
 
-            await saveData();
-            
-            document.getElementById('gamePassword').value = '';
-            document.getElementById('gameEmail').value = '';
-            document.getElementById('emailPassword').value = '';
-            document.getElementById('lotName').value = '';
-            document.getElementById('price').value = '';
+            try {
+                await saveData();
+                
+                document.getElementById('gamePassword').value = '';
+                document.getElementById('gameEmail').value = '';
+                document.getElementById('emailPassword').value = '';
+                document.getElementById('lotName').value = '';
+                document.getElementById('price').value = '';
 
-            tg.showAlert('✅ Аккаунт успешно сохранён!');
-            showAllList();
+                tg.showAlert('✅ Аккаунт успешно сохранён!');
+                showAllList();
+            } catch (err) {
+                tg.showAlert('❌ Ошибка сохранения: ' + err.message);
+            }
         }
 
         function viewAccount(index, tab) {
@@ -1164,9 +1182,7 @@
                     }
                     await saveData();
                     if (currentTab === 'list') renderAccounts();
-                    else {
-                        renderSoldAccounts();
-                    }
+                    else renderSoldAccounts();
                     closeModal();
                     tg.showAlert('🗑️ Удалено!');
                 }
@@ -1207,9 +1223,10 @@
             }
         });
 
+        document.getElementById('date').valueAsDate = new Date();
+
         (async () => {
             await loadData();
-            renderStats();
             updateHeaderStats();
         })();
     </script>
