@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Accounts Manager</title>
+    <title>xxxgl</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,57 +13,181 @@
             color: var(--tg-theme-text-color, #000000);
             padding: 16px;
         }
-        h1 { font-size: 20px; margin-bottom: 16px; }
-        h2 { font-size: 16px; margin: 20px 0 12px; }
         
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn {
-            flex: 1; min-width: 100px; padding: 12px;
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .header-title {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--tg-theme-button-color, #3390ec), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            color: var(--tg-theme-text-color, #000000);
-            border: none; border-radius: 8px;
-            font-size: 14px; font-weight: 600; cursor: pointer;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
         }
-        .tab-btn.active {
-            background-color: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #ffffff);
+        .menu-btn:active { transform: scale(0.9); }
+        .menu-dots {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .menu-dots span {
+            width: 5px;
+            height: 5px;
+            background-color: var(--tg-theme-text-color, #000000);
+            border-radius: 50%;
         }
         
+        /* Dropdown Menu */
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            min-width: 200px;
+            z-index: 1000;
+            animation: slideDown 0.2s ease;
+        }
+        .dropdown.active { display: block; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .dropdown-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dropdown-item:hover { background-color: var(--tg-theme-secondary-bg-color, #f0f0f0); }
+        .dropdown-item.active { background-color: var(--tg-theme-button-color, #3390ec); color: white; }
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            margin: 8px 0;
+        }
+        
+        /* Header Stats */
+        .header-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, var(--tg-theme-button-color, #3390ec), #2575c4);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            text-align: center;
+        }
+        .stat-label { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .stat-value { font-size: 20px; font-weight: 700; }
+        
+        /* Content */
         .content { display: none; }
         .content.active { display: block; }
         
+        /* Form */
         .form-container {
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px; padding: 16px; margin-bottom: 20px;
+            border-radius: 16px; padding: 20px; margin-bottom: 20px;
         }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 13px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 4px; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: 13px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 6px; font-weight: 500; }
         input {
-            width: 100%; padding: 10px 12px;
-            border: 1px solid var(--tg-theme-button-color, #3390ec);
-            border-radius: 8px; font-size: 14px;
+            width: 100%; padding: 12px 14px;
+            border: 2px solid transparent;
+            border-radius: 12px; font-size: 14px;
             background-color: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
+            transition: border-color 0.2s;
         }
-        input:focus { outline: none; border-color: var(--tg-theme-button-color, #3390ec); }
+        input:focus { 
+            outline: none; 
+            border-color: var(--tg-theme-button-color, #3390ec);
+        }
         button.action-btn {
-            width: 100%; padding: 12px;
-            background-color: var(--tg-theme-button-color, #3390ec);
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, var(--tg-theme-button-color, #3390ec), #2575c4);
             color: var(--tg-theme-button-text-color, #ffffff);
-            border: none; border-radius: 8px;
-            font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px;
+            border: none; border-radius: 12px;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+            margin-top: 8px;
+            transition: transform 0.2s;
         }
+        button.action-btn:active { transform: scale(0.98); }
         
+        /* Accounts List */
         .accounts-list { margin-top: 10px; }
         .account-card {
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px; padding: 16px;
-            margin-bottom: 12px; cursor: pointer;
+            border-radius: 16px; padding: 16px;
+            margin-bottom: 12px;
+            transition: transform 0.2s;
         }
-        .account-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-        .account-preview { font-size: 13px; color: var(--tg-theme-hint-color, #666666); }
-        .account-id { font-size: 11px; color: var(--tg-theme-hint-color, #999999); margin-top: 6px; }
+        .account-card:active { transform: scale(0.98); }
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .account-title { font-size: 16px; font-weight: 600; }
+        .account-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--tg-theme-button-color, #3390ec);
+        }
+        .account-preview { font-size: 13px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 12px; }
+        .account-actions { display: flex; gap: 8px; }
+        .account-actions button {
+            flex: 1; padding: 10px;
+            border: none; border-radius: 10px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .account-actions button:active { transform: scale(0.96); }
+        .btn-sell {
+            background: linear-gradient(135deg, #44aa44, #3d993d);
+            color: white;
+        }
+        .btn-view {
+            background-color: var(--tg-theme-button-color, #3390ec);
+            color: white;
+        }
+        .btn-delete {
+            background: linear-gradient(135deg, #ff4444, #e63e3e);
+            color: white;
+        }
         
+        /* Modal */
         .modal {
             display: none; position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -74,108 +198,171 @@
         .modal.active { display: flex; }
         .modal-content {
             background-color: var(--tg-theme-bg-color, #ffffff);
-            border-radius: 16px; padding: 20px;
+            border-radius: 20px; padding: 24px;
             width: 90%; max-width: 400px;
             max-height: 80vh; overflow-y: auto;
         }
-        .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
-        .detail-row { margin-bottom: 16px; }
-        .detail-label { font-size: 12px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 4px; }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+        .detail-row { margin-bottom: 18px; }
+        .detail-label { font-size: 12px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 6px; font-weight: 500; }
         .detail-value {
-            font-size: 14px; padding: 10px;
+            font-size: 14px; padding: 12px;
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 8px; word-break: break-all;
+            border-radius: 12px; word-break: break-all;
         }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .modal-buttons button { flex: 1; min-width: 100px; }
-        .empty-state { text-align: center; padding: 40px 20px; color: var(--tg-theme-hint-color, #666666); }
-        .delete-btn { background-color: #ff4444; margin-top: 10px; }
-        .copy-btn { background-color: #44aa44; margin-top: 10px; }
-        .sell-btn { background-color: #ff8800; margin-top: 10px; }
+        .modal-buttons { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+        .modal-buttons button {
+            flex: 1; min-width: 100px; padding: 12px;
+            border: none; border-radius: 12px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+        }
+        .empty-state { text-align: center; padding: 50px 20px; color: var(--tg-theme-hint-color, #666666); }
+        .delete-btn { background: linear-gradient(135deg, #ff4444, #e63e3e); color: white; }
+        .copy-btn { background: linear-gradient(135deg, #44aa44, #3d993d); color: white; }
+        .sell-btn { background: linear-gradient(135deg, #ff8800, #e67a00); color: white; }
         
+        /* Sold List */
+        .sold-card {
+            background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
+            border-left: 4px solid #44aa44;
+            border-radius: 16px; padding: 16px;
+            margin-bottom: 12px;
+        }
+        .sold-title { font-size: 16px; font-weight: 600; color: #44aa44; margin-bottom: 8px; }
+        
+        /* Stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
         .stats-card {
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px; padding: 16px;
-            margin-bottom: 20px; text-align: center;
+            border-radius: 16px; padding: 20px;
+            text-align: center;
         }
-        .stats-value { font-size: 24px; font-weight: 700; color: var(--tg-theme-button-color, #3390ec); margin-top: 8px; }
+        .stats-label { font-size: 13px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 8px; }
+        .stats-value { font-size: 26px; font-weight: 700; color: var(--tg-theme-button-color, #3390ec); }
         
         .chart-container {
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px; padding: 16px; margin-top: 20px;
+            border-radius: 16px; padding: 20px; margin-top: 20px;
         }
-        .chart-bar { display: flex; align-items: flex-end; height: 150px; gap: 8px; padding: 10px 0; }
+        .chart-bar { display: flex; align-items: flex-end; height: 160px; gap: 10px; padding: 16px 8px; }
         .chart-column {
-            flex: 1; background-color: var(--tg-theme-button-color, #3390ec);
-            border-radius: 4px 4px 0 0; min-height: 4px; position: relative;
+            flex: 1; 
+            background: linear-gradient(180deg, var(--tg-theme-button-color, #3390ec), #2575c4);
+            border-radius: 8px 8px 0 0; 
+            min-height: 4px; 
+            position: relative;
+            transition: height 0.3s;
         }
-        .chart-label { font-size: 10px; text-align: center; margin-top: 4px; color: var(--tg-theme-hint-color, #666666); }
+        .chart-label { font-size: 11px; text-align: center; margin-top: 8px; color: var(--tg-theme-hint-color, #666666); font-weight: 500; }
         .chart-value {
-            position: absolute; top: -18px; left: 50%;
-            transform: translateX(-50%); font-size: 10px;
-            font-weight: 600; white-space: nowrap;
+            position: absolute; top: -22px; left: 50%;
+            transform: translateX(-50%); font-size: 11px;
+            font-weight: 700; white-space: nowrap;
+            color: var(--tg-theme-button-color, #3390ec);
         }
     </style>
 </head>
 <body>
-    <h1>🎮 Менеджер аккаунтов</h1>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-title">xxxgl</div>
+        <button class="menu-btn" onclick="toggleMenu()">
+            <div class="menu-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+        <div class="dropdown" id="menuDropdown">
+            <div class="dropdown-item active" onclick="switchTab('add')">
+                <span>➕</span> Добавить
+            </div>
+            <div class="dropdown-item" onclick="switchTab('list')">
+                <span>📋</span> Аккаунты
+            </div>
+            <div class="dropdown-item" onclick="switchTab('sold')">
+                <span>✅</span> Архив
+            </div>
+            <div class="dropdown-item" onclick="switchTab('stats')">
+                <span>📊</span> Статистика
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item" onclick="closeMenu()">
+                <span>❌</span> Закрыть
+            </div>
+        </div>
+    </div>
     
-    <div class="tabs">
-        <button class="tab-btn" onclick="switchTab('add')">➕ Добавить</button>
-        <button class="tab-btn" onclick="switchTab('list')">📋 Аккаунты</button>
-        <button class="tab-btn" onclick="switchTab('sold')">💰 Проданные</button>
-        <button class="tab-btn" onclick="switchTab('stats')">📊 Статистика</button>
+    <div class="header-stats">
+        <div class="stat-card">
+            <div class="stat-label">💰 Заработок</div>
+            <div class="stat-value" id="headerEarnings">0 ₽</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">📦 Продано</div>
+            <div class="stat-value" id="headerSold">0</div>
+        </div>
     </div>
     
     <div id="addTab" class="content">
         <div class="form-container">
             <div class="form-group">
-                <label>1. Пароль от игры</label>
+                <label>🔑 Пароль от игры</label>
                 <input type="text" id="gamePassword" placeholder="Введите пароль">
             </div>
             <div class="form-group">
-                <label>2. Почта от игры</label>
+                <label>📧 Почта от игры</label>
                 <input type="email" id="gameEmail" placeholder="example@mail.com">
             </div>
             <div class="form-group">
-                <label>3. Пароль от почты</label>
+                <label>🔒 Пароль от почты</label>
                 <input type="text" id="emailPassword" placeholder="Введите пароль">
             </div>
             <div class="form-group">
-                <label>4. Название лота</label>
+                <label>📦 Название лота</label>
                 <input type="text" id="lotName" placeholder="Например: AK-47 | Asiimov">
             </div>
             <div class="form-group">
-                <label>5. Цена</label>
+                <label>💵 Цена</label>
                 <input type="text" id="price" placeholder="Например: 5000 руб">
             </div>
-            <button class="action-btn" onclick="saveAccount()">💾 Сохранить</button>
+            <button class="action-btn" onclick="saveAccount()">💾 Сохранить аккаунт</button>
         </div>
     </div>
     
     <div id="listTab" class="content">
+        <h2>📋 Аккаунты на продаже</h2>
         <div id="accountsList" class="accounts-list">
-            <div class="empty-state">Нет сохранённых аккаунтов</div>
+            <div class="empty-state">Нет сохранённых аккаунтов<br><br>Добавьте первый аккаунт</div>
         </div>
     </div>
     
     <div id="soldTab" class="content">
+        <h2>✅ Архив проданных</h2>
         <div id="soldList" class="accounts-list">
-            <div class="empty-state">Нет проданных лотов</div>
+            <div class="empty-state">Нет проданных лотов<br><br>Проданные аккаунты появятся здесь</div>
         </div>
     </div>
     
     <div id="statsTab" class="content">
-        <div class="stats-card">
-            <div>💰 Общий заработок</div>
-            <div class="stats-value" id="totalEarnings">0 руб</div>
-        </div>
-        <div class="stats-card">
-            <div>📦 Продано лотов</div>
-            <div class="stats-value" id="totalSold">0</div>
+        <h2>📊 Общая статистика</h2>
+        <div class="stats-container">
+            <div class="stats-card">
+                <div class="stats-label">💰 Общий заработок</div>
+                <div class="stats-value" id="totalEarnings">0 ₽</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-label">📦 Продано лотов</div>
+                <div class="stats-value" id="totalSold">0</div>
+            </div>
         </div>
         <div class="chart-container">
-            <h2 style="margin-top: 0;">📈 Заработок по дням</h2>
+            <h2>📈 Заработок по дням</h2>
             <div id="chartContainer" style="margin-top: 16px;"></div>
         </div>
     </div>
@@ -185,9 +372,9 @@
             <div class="modal-title" id="modalTitle">Детали аккаунта</div>
             <div id="modalDetails"></div>
             <div class="modal-buttons">
-                <button onclick="closeModal()">Закрыть</button>
+                <button onclick="closeModal()">❌ Закрыть</button>
                 <button class="copy-btn" onclick="copyAll()">📋 Копировать</button>
-                <button class="sell-btn" onclick="markAsSold()">✅ Продан</button>
+                <button class="sell-btn" onclick="markAsSold()">💰 Продан</button>
                 <button class="delete-btn" onclick="deleteCurrentAccount()">🗑️ Удалить</button>
             </div>
         </div>
@@ -203,19 +390,38 @@
         let currentAccountId = null;
         let currentTab = 'list';
 
+        function toggleMenu() {
+            document.getElementById('menuDropdown').classList.toggle('active');
+        }
+
+        function closeMenu() {
+            document.getElementById('menuDropdown').classList.remove('active');
+        }
+
+        function updateHeaderStats() {
+            const totalEarnings = soldAccounts.reduce((sum, acc) => {
+                const price = parseFloat(acc.price.replace(/[^0-9.]/g, '')) || 0;
+                return sum + price;
+            }, 0);
+            document.getElementById('headerEarnings').textContent = totalEarnings.toLocaleString() + ' ₽';
+            document.getElementById('headerSold').textContent = soldAccounts.length;
+        }
+
         function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
             
             const tabIndexes = { 'add': 1, 'list': 2, 'sold': 3, 'stats': 4 };
-            document.querySelector(`.tab-btn:nth-child(${tabIndexes[tabName]})`).classList.add('active');
+            document.querySelector(`.dropdown-item:nth-child(${tabIndexes[tabName]})`).classList.add('active');
             document.getElementById(`${tabName}Tab`).classList.add('active');
             
             currentTab = tabName;
+            closeMenu();
             
             if (tabName === 'list') renderAccounts();
             if (tabName === 'sold') renderSoldAccounts();
             if (tabName === 'stats') renderStats();
+            updateHeaderStats();
         }
 
         async function loadData() {
@@ -249,23 +455,29 @@
                 if (err) {
                     console.error('Ошибка сохранения:', err);
                     tg.showAlert('Ошибка сохранения: ' + err);
-                } else {
-                    console.log('Данные успешно сохранены');
                 }
             });
+            updateHeaderStats();
         }
 
         function renderAccounts() {
             const container = document.getElementById('accountsList');
             if (accounts.length === 0) {
-                container.innerHTML = '<div class="empty-state">Нет сохранённых аккаунтов<br><br>Перейдите на вкладку "Добавить" чтобы создать первый аккаунт</div>';
+                container.innerHTML = '<div class="empty-state">Нет сохранённых аккаунтов<br><br>Добавьте первый аккаунт во вкладке «Добавить»</div>';
                 return;
             }
             container.innerHTML = accounts.map((acc, index) => `
-                <div class="account-card" onclick="viewAccount(${index}, 'list')">
-                    <div class="account-title">📦 ${escapeHtml(acc.lotName)}</div>
-                    <div class="account-preview">💰 ${escapeHtml(acc.price)}<br>📧 ${escapeHtml(acc.gameEmail)}</div>
-                    <div class="account-id">ID: ${acc.id}</div>
+                <div class="account-card">
+                    <div class="account-header">
+                        <div class="account-title">📦 ${escapeHtml(acc.lotName)}</div>
+                        <div class="account-price">${escapeHtml(acc.price)}</div>
+                    </div>
+                    <div class="account-preview">📧 ${escapeHtml(acc.gameEmail)}</div>
+                    <div class="account-actions">
+                        <button class="btn-view" onclick="viewAccount(${index}, 'list')">👁️ Просмотр</button>
+                        <button class="btn-sell" onclick="markAsSoldFromList(${index})">💰 Продан</button>
+                        <button class="btn-delete" onclick="deleteFromList(${index})">🗑️</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -273,13 +485,17 @@
         function renderSoldAccounts() {
             const container = document.getElementById('soldList');
             if (soldAccounts.length === 0) {
-                container.innerHTML = '<div class="empty-state">Нет проданных лотов<br><br>Отметьте аккаунт как проданный в деталях</div>';
+                container.innerHTML = '<div class="empty-state">Нет проданных лотов<br><br>Проданные аккаунты появятся здесь</div>';
                 return;
             }
             container.innerHTML = soldAccounts.map((acc, index) => `
-                <div class="account-card" onclick="viewAccount(${index}, 'sold')">
-                    <div class="account-title">✅ ${escapeHtml(acc.lotName)}</div>
-                    <div class="account-preview">💰 ${escapeHtml(acc.price)}<br>📅 Продан: ${new Date(acc.soldAt).toLocaleDateString()}</div>
+                <div class="sold-card">
+                    <div class="sold-title">✅ ${escapeHtml(acc.lotName)}</div>
+                    <div class="account-preview">💰 ${escapeHtml(acc.price)} | 📅 ${new Date(acc.soldAt).toLocaleDateString()}</div>
+                    <div class="account-actions">
+                        <button class="btn-view" onclick="viewAccount(${index}, 'sold')">👁️ Просмотр</button>
+                        <button class="btn-delete" onclick="deleteFromList(${index})">🗑️ Удалить</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -290,7 +506,7 @@
                 return sum + price;
             }, 0);
             
-            document.getElementById('totalEarnings').textContent = totalEarnings.toLocaleString() + ' руб';
+            document.getElementById('totalEarnings').textContent = totalEarnings.toLocaleString() + ' ₽';
             document.getElementById('totalSold').textContent = soldAccounts.length;
             
             const days = {};
@@ -306,7 +522,7 @@
             const chartHTML = sortedDays.map(([date, value]) => `
                 <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
                     <div class="chart-column" style="height: ${(value / maxValue) * 100}%; position: relative;">
-                        <div class="chart-value">${value.toLocaleString()}</div>
+                        <div class="chart-value">${value.toLocaleString()} ₽</div>
                     </div>
                     <div class="chart-label">${date.split('.').slice(0, 2).join('.')}</div>
                 </div>
@@ -323,7 +539,7 @@
             const price = document.getElementById('price').value.trim();
 
             if (!gamePassword || !gameEmail || !emailPassword || !lotName || !price) {
-                tg.showAlert('Пожалуйста, заполните все поля!');
+                tg.showAlert('⚠️ Пожалуйста, заполните все поля!');
                 return;
             }
 
@@ -359,11 +575,11 @@
             document.getElementById('modalTitle').textContent = isSold ? 'Проданный лот' : 'Детали аккаунта';
             
             const details = `
-                <div class="detail-row"><div class="detail-label">1. Пароль от игры</div><div class="detail-value">${escapeHtml(acc.gamePassword)}</div></div>
-                <div class="detail-row"><div class="detail-label">2. Почта от игры</div><div class="detail-value">${escapeHtml(acc.gameEmail)}</div></div>
-                <div class="detail-row"><div class="detail-label">3. Пароль от почты</div><div class="detail-value">${escapeHtml(acc.emailPassword)}</div></div>
-                <div class="detail-row"><div class="detail-label">4. Название лота</div><div class="detail-value">${escapeHtml(acc.lotName)}</div></div>
-                <div class="detail-row"><div class="detail-label">5. Цена</div><div class="detail-value">${escapeHtml(acc.price)}</div></div>
+                <div class="detail-row"><div class="detail-label">🔑 Пароль от игры</div><div class="detail-value">${escapeHtml(acc.gamePassword)}</div></div>
+                <div class="detail-row"><div class="detail-label">📧 Почта от игры</div><div class="detail-value">${escapeHtml(acc.gameEmail)}</div></div>
+                <div class="detail-row"><div class="detail-label">🔒 Пароль от почты</div><div class="detail-value">${escapeHtml(acc.emailPassword)}</div></div>
+                <div class="detail-row"><div class="detail-label">📦 Название лота</div><div class="detail-value">${escapeHtml(acc.lotName)}</div></div>
+                <div class="detail-row"><div class="detail-label">💵 Цена</div><div class="detail-value">${escapeHtml(acc.price)}</div></div>
             `;
             
             document.getElementById('modalDetails').innerHTML = details;
@@ -386,9 +602,24 @@
             });
         }
 
+        async function markAsSoldFromList(index) {
+            tg.showConfirm('💰 Отметить этот аккаунт как проданный?', async (confirmed) => {
+                if (confirmed) {
+                    const acc = accounts[index];
+                    acc.soldAt = new Date().toISOString();
+                    soldAccounts.unshift(acc);
+                    accounts.splice(index, 1);
+                    await saveData();
+                    renderAccounts();
+                    updateHeaderStats();
+                    tg.showAlert('✅ Аккаунт продан! Сумма добавлена в статистику.');
+                }
+            });
+        }
+
         async function markAsSold() {
             if (currentAccountId === null) return;
-            tg.showConfirm('Отметить этот аккаунт как проданный?', async (confirmed) => {
+            tg.showConfirm('💰 Отметить этот аккаунт как проданный?', async (confirmed) => {
                 if (confirmed) {
                     const acc = accounts[currentAccountId];
                     acc.soldAt = new Date().toISOString();
@@ -397,14 +628,32 @@
                     await saveData();
                     closeModal();
                     renderAccounts();
-                    tg.showAlert('✅ Аккаунт отмечен как проданный!');
+                    updateHeaderStats();
+                    tg.showAlert('✅ Аккаунт продан! Сумма добавлена в статистику.');
+                }
+            });
+        }
+
+        async function deleteFromList(index) {
+            tg.showConfirm('🗑️ Вы уверены, что хотите удалить этот аккаунт?', async (confirmed) => {
+                if (confirmed) {
+                    if (currentTab === 'list' || currentAccountId === null) {
+                        accounts.splice(index, 1);
+                    } else if (currentTab === 'sold') {
+                        soldAccounts.splice(index, 1);
+                    }
+                    await saveData();
+                    if (currentTab === 'list') renderAccounts();
+                    else renderSoldAccounts();
+                    if (currentAccountId !== null) closeModal();
+                    tg.showAlert('🗑️ Аккаунт удалён');
                 }
             });
         }
 
         async function deleteCurrentAccount() {
             if (currentAccountId === null) return;
-            tg.showConfirm('Вы уверены, что хотите удалить этот аккаунт?', async (confirmed) => {
+            tg.showConfirm('🗑️ Вы уверены, что хотите удалить этот аккаунт?', async (confirmed) => {
                 if (confirmed) {
                     if (currentTab === 'list') {
                         accounts.splice(currentAccountId, 1);
@@ -426,9 +675,19 @@
             return div.innerHTML;
         }
 
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('menuDropdown');
+            const btn = document.querySelector('.menu-btn');
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
         (async () => {
             await loadData();
             renderAccounts();
+            updateHeaderStats();
         })();
     </script>
 </body>
