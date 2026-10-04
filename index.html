@@ -16,39 +16,30 @@
             overflow-x: hidden;
         }
         
-        /* Background Image */
         .bg-image {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: url('https://images4.alphacoders.com/600/600768.png') no-repeat center center fixed;
             background-size: cover;
             opacity: 0.15;
             z-index: -1;
         }
         
-        /* Overlay */
         .bg-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: linear-gradient(135deg, rgba(51, 144, 236, 0.1), rgba(139, 92, 246, 0.15));
             z-index: -1;
         }
         
-        /* Mobile Menu Button */
         .mobile-menu-btn {
             display: none;
             position: fixed;
-            top: 16px;
-            left: 16px;
+            top: 16px; left: 16px;
             z-index: 1001;
-            width: 44px;
-            height: 44px;
+            width: 44px; height: 44px;
             background: linear-gradient(135deg, #3390ec, #8b5cf6);
             border-radius: 12px;
             border: none;
@@ -59,8 +50,7 @@
         }
         .mobile-menu-btn span {
             display: block;
-            width: 22px;
-            height: 3px;
+            width: 22px; height: 3px;
             background: white;
             border-radius: 2px;
             position: relative;
@@ -70,8 +60,7 @@
         .mobile-menu-btn span::after {
             content: '';
             position: absolute;
-            width: 22px;
-            height: 3px;
+            width: 22px; height: 3px;
             background: white;
             border-radius: 2px;
             transition: all 0.3s;
@@ -82,7 +71,6 @@
         .mobile-menu-btn.active span::before { top: 0; transform: rotate(45deg); }
         .mobile-menu-btn.active span::after { top: 0; transform: rotate(-45deg); }
         
-        /* Sidebar */
         .sidebar {
             width: 260px;
             background: linear-gradient(180deg, rgba(240, 240, 240, 0.98), rgba(232, 232, 232, 0.95));
@@ -133,7 +121,6 @@
             border-radius: 2px;
         }
         
-        /* Main Content */
         .main-content {
             margin-left: 260px;
             flex: 1;
@@ -141,7 +128,6 @@
             transition: margin-left 0.3s;
         }
         
-        /* Header */
         .header { margin-bottom: 24px; }
         .header-title {
             font-size: 28px;
@@ -152,7 +138,6 @@
             background-clip: text;
         }
         
-        /* Header Stats */
         .header-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -170,11 +155,9 @@
         .stat-label { font-size: 13px; opacity: 0.95; margin-bottom: 6px; font-weight: 500; }
         .stat-value { font-size: 24px; font-weight: 800; }
         
-        /* Content */
         .content { display: none; }
         .content.active { display: block; }
         
-        /* Form */
         .form-container {
             background: linear-gradient(135deg, rgba(240, 240, 240, 0.95), rgba(232, 232, 232, 0.9));
             backdrop-filter: blur(20px);
@@ -218,7 +201,6 @@
         }
         button.action-btn:active { transform: scale(0.98); }
         
-        /* Accounts List */
         .accounts-list { margin-top: 12px; }
         .account-card {
             background: linear-gradient(135deg, rgba(240, 240, 240, 0.95), rgba(232, 232, 232, 0.9));
@@ -234,10 +216,8 @@
         .account-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
             background: linear-gradient(180deg, #3390ec, #8b5cf6);
             border-radius: 4px 0 0 4px;
         }
@@ -274,7 +254,6 @@
         .btn-view { background: linear-gradient(135deg, #3390ec, #2575c4); color: white; }
         .btn-delete { background: linear-gradient(135deg, #ff4444, #e63e3e); color: white; }
         
-        /* Modal */
         .modal {
             display: none; 
             position: fixed;
@@ -354,7 +333,6 @@
         .copy-btn { background: linear-gradient(135deg, #44aa44, #3d993d); color: white; }
         .sell-btn { background: linear-gradient(135deg, #ff8800, #e67a00); color: white; }
         
-        /* Sold List */
         .sold-card {
             background: linear-gradient(135deg, rgba(240, 240, 240, 0.95), rgba(232, 232, 232, 0.9));
             backdrop-filter: blur(20px);
@@ -367,7 +345,6 @@
         }
         .sold-title { font-size: 17px; font-weight: 700; color: #44aa44; margin-bottom: 10px; }
         
-        /* Stats */
         .stats-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -422,7 +399,6 @@
             background-clip: text;
         }
         
-        /* About Page */
         .about-content {
             display: flex;
             flex-direction: column;
@@ -458,7 +434,6 @@
         }
         .about-link:active { transform: scale(0.98); }
         
-        /* Mobile Responsive */
         @media (max-width: 768px) {
             .mobile-menu-btn { display: flex; }
             .sidebar { transform: translateX(-100%); }
@@ -474,37 +449,33 @@
     </style>
 </head>
 <body>
-    <!-- Background -->
     <div class="bg-image"></div>
     <div class="bg-overlay"></div>
     
-    <!-- Mobile Menu Button -->
     <button class="mobile-menu-btn" onclick="toggleSidebar()">
         <span></span>
     </button>
     
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-title">xxxgl</div>
-        <div class="sidebar-item active" onclick="switchTab('add')">
+        <div class="sidebar-item active" data-tab="add" onclick="switchTab('add')">
             <span>➕</span> Добавить
         </div>
-        <div class="sidebar-item" onclick="switchTab('list')">
+        <div class="sidebar-item" data-tab="list" onclick="switchTab('list')">
             <span>📋</span> Аккаунты
         </div>
-        <div class="sidebar-item" onclick="switchTab('sold')">
+        <div class="sidebar-item" data-tab="sold" onclick="switchTab('sold')">
             <span>✅</span> Архив
         </div>
-        <div class="sidebar-item" onclick="switchTab('stats')">
+        <div class="sidebar-item" data-tab="stats" onclick="switchTab('stats')">
             <span>📊</span> Статистика
         </div>
         <div class="sidebar-divider"></div>
-        <div class="sidebar-item" onclick="switchTab('about')">
+        <div class="sidebar-item" data-tab="about" onclick="switchTab('about')">
             <span>ℹ️</span> About
         </div>
     </div>
     
-    <!-- Main Content -->
     <div class="main-content">
         <div class="header-stats">
             <div class="stat-card">
@@ -630,12 +601,27 @@
         }
 
         function switchTab(tabName) {
-            document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
-            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            // Hide all content
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.remove('active');
+            });
             
-            const tabIndexes = { 'add': 1, 'list': 2, 'sold': 3, 'stats': 4, 'about': 6 };
-            document.querySelector(`.sidebar-item:nth-child(${tabIndexes[tabName]})`).classList.add('active');
-            document.getElementById(`${tabName}Tab`).classList.add('active');
+            // Remove active from all sidebar items
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected content
+            const selectedContent = document.getElementById(tabName + 'Tab');
+            if (selectedContent) {
+                selectedContent.classList.add('active');
+            }
+            
+            // Set active sidebar item
+            const activeItem = document.querySelector('.sidebar-item[data-tab="' + tabName + '"]');
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
             
             currentTab = tabName;
             closeSidebar();
@@ -750,7 +736,7 @@
                 </div>
             `).join('');
             
-            document.getElementById('chartContainer').innerHTML = `<div class="chart-bar">${chartHTML}</div>`;
+            document.getElementById('chartContainer').innerHTML = '<div class="chart-bar">' + chartHTML + '</div>';
         }
 
         async function saveAccount() {
@@ -854,7 +840,7 @@
         function copyAll() {
             if (currentAccountId === null) return;
             const acc = currentTab === 'list' ? accounts[currentAccountId] : soldAccounts[currentAccountId];
-            const text = `Пароль от игры: ${acc.gamePassword}\nПочта от игры: ${acc.gameEmail}\nПароль от почты: ${acc.emailPassword}\nНазвание лота: ${acc.lotName}\nЦена: ${acc.price}`;
+            const text = 'Пароль от игры: ' + acc.gamePassword + '\nПочта от игры: ' + acc.gameEmail + '\nПароль от почты: ' + acc.emailPassword + '\nНазвание лота: ' + acc.lotName + '\nЦена: ' + acc.price;
             navigator.clipboard.writeText(text).then(() => {
                 tg.showAlert('📋 Все данные скопированы!');
             }).catch(() => {
@@ -935,7 +921,6 @@
             return div.innerHTML;
         }
 
-        // Close sidebar when clicking outside on mobile
         document.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
                 const sidebar = document.getElementById('sidebar');
