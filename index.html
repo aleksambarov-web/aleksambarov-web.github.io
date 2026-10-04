@@ -16,108 +16,75 @@
         h1 { font-size: 20px; margin-bottom: 16px; }
         h2 { font-size: 16px; margin: 20px 0 12px; }
         
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn {
-            flex: 1;
-            min-width: 100px;
-            padding: 12px;
+            flex: 1; min-width: 100px; padding: 12px;
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
             color: var(--tg-theme-text-color, #000000);
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
+            border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
         }
         .tab-btn.active {
             background-color: var(--tg-theme-button-color, #3390ec);
             color: var(--tg-theme-button-text-color, #ffffff);
         }
         
-        /* Content */
         .content { display: none; }
         .content.active { display: block; }
         
         .form-container {
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
+            border-radius: 12px; padding: 16px; margin-bottom: 20px;
         }
         .form-group { margin-bottom: 12px; }
         label { display: block; font-size: 13px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 4px; }
         input {
-            width: 100%;
-            padding: 10px 12px;
+            width: 100%; padding: 10px 12px;
             border: 1px solid var(--tg-theme-button-color, #3390ec);
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 8px; font-size: 14px;
             background-color: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
         }
         input:focus { outline: none; border-color: var(--tg-theme-button-color, #3390ec); }
         button.action-btn {
-            width: 100%;
-            padding: 12px;
+            width: 100%; padding: 12px;
             background-color: var(--tg-theme-button-color, #3390ec);
             color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 8px;
+            border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px;
         }
         
-        /* Accounts list */
         .accounts-list { margin-top: 10px; }
         .account-card {
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
+            border-radius: 12px; padding: 16px;
+            margin-bottom: 12px; cursor: pointer;
         }
         .account-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
         .account-preview { font-size: 13px; color: var(--tg-theme-hint-color, #666666); }
         .account-id { font-size: 11px; color: var(--tg-theme-hint-color, #999999); margin-top: 6px; }
         
-        /* Modal */
         .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            align-items: center; justify-content: center;
         }
         .modal.active { display: flex; }
         .modal-content {
             background-color: var(--tg-theme-bg-color, #ffffff);
-            border-radius: 16px;
-            padding: 20px;
-            width: 90%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
+            border-radius: 16px; padding: 20px;
+            width: 90%; max-width: 400px;
+            max-height: 80vh; overflow-y: auto;
         }
         .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
         .detail-row { margin-bottom: 16px; }
         .detail-label { font-size: 12px; color: var(--tg-theme-hint-color, #666666); margin-bottom: 4px; }
         .detail-value {
-            font-size: 14px;
-            padding: 10px;
+            font-size: 14px; padding: 10px;
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 8px;
-            word-break: break-all;
+            border-radius: 8px; word-break: break-all;
         }
         .modal-buttons { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
         .modal-buttons button { flex: 1; min-width: 100px; }
@@ -126,58 +93,33 @@
         .copy-btn { background-color: #44aa44; margin-top: 10px; }
         .sell-btn { background-color: #ff8800; margin-top: 10px; }
         
-        /* Stats */
         .stats-card {
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            text-align: center;
+            border-radius: 12px; padding: 16px;
+            margin-bottom: 20px; text-align: center;
         }
         .stats-value { font-size: 24px; font-weight: 700; color: var(--tg-theme-button-color, #3390ec); margin-top: 8px; }
         
-        /* Chart */
         .chart-container {
             background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 20px;
+            border-radius: 12px; padding: 16px; margin-top: 20px;
         }
-        .chart-bar {
-            display: flex;
-            align-items: flex-end;
-            height: 150px;
-            gap: 8px;
-            padding: 10px 0;
-        }
+        .chart-bar { display: flex; align-items: flex-end; height: 150px; gap: 8px; padding: 10px 0; }
         .chart-column {
-            flex: 1;
-            background-color: var(--tg-theme-button-color, #3390ec);
-            border-radius: 4px 4px 0 0;
-            min-height: 4px;
-            position: relative;
+            flex: 1; background-color: var(--tg-theme-button-color, #3390ec);
+            border-radius: 4px 4px 0 0; min-height: 4px; position: relative;
         }
-        .chart-label {
-            font-size: 10px;
-            text-align: center;
-            margin-top: 4px;
-            color: var(--tg-theme-hint-color, #666666);
-        }
+        .chart-label { font-size: 10px; text-align: center; margin-top: 4px; color: var(--tg-theme-hint-color, #666666); }
         .chart-value {
-            position: absolute;
-            top: -18px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 10px;
-            font-weight: 600;
-            white-space: nowrap;
+            position: absolute; top: -18px; left: 50%;
+            transform: translateX(-50%); font-size: 10px;
+            font-weight: 600; white-space: nowrap;
         }
     </style>
 </head>
 <body>
     <h1>🎮 Менеджер аккаунтов</h1>
     
-    <!-- Tabs -->
     <div class="tabs">
         <button class="tab-btn" onclick="switchTab('add')">➕ Добавить</button>
         <button class="tab-btn" onclick="switchTab('list')">📋 Аккаунты</button>
@@ -185,7 +127,6 @@
         <button class="tab-btn" onclick="switchTab('stats')">📊 Статистика</button>
     </div>
     
-    <!-- Add Tab -->
     <div id="addTab" class="content">
         <div class="form-container">
             <div class="form-group">
@@ -212,21 +153,18 @@
         </div>
     </div>
     
-    <!-- List Tab -->
     <div id="listTab" class="content">
         <div id="accountsList" class="accounts-list">
             <div class="empty-state">Нет сохранённых аккаунтов</div>
         </div>
     </div>
     
-    <!-- Sold Tab -->
     <div id="soldTab" class="content">
         <div id="soldList" class="accounts-list">
             <div class="empty-state">Нет проданных лотов</div>
         </div>
     </div>
     
-    <!-- Stats Tab -->
     <div id="statsTab" class="content">
         <div class="stats-card">
             <div>💰 Общий заработок</div>
@@ -242,7 +180,6 @@
         </div>
     </div>
     
-    <!-- Modal -->
     <div id="accountModal" class="modal">
         <div class="modal-content">
             <div class="modal-title" id="modalTitle">Детали аккаунта</div>
@@ -270,7 +207,8 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
             
-            document.querySelector(`.tab-btn:nth-child(${getTabIndex(tabName)})`).classList.add('active');
+            const tabIndexes = { 'add': 1, 'list': 2, 'sold': 3, 'stats': 4 };
+            document.querySelector(`.tab-btn:nth-child(${tabIndexes[tabName]})`).classList.add('active');
             document.getElementById(`${tabName}Tab`).classList.add('active');
             
             currentTab = tabName;
@@ -280,46 +218,40 @@
             if (tabName === 'stats') renderStats();
         }
 
-        function getTabIndex(name) {
-            const tabs = { 'add': 1, 'list': 2, 'sold': 3, 'stats': 4 };
-            return tabs[name];
-        }
-
-        async function loadAccounts() {
+        async function loadData() {
             return new Promise((resolve) => {
-                tg.CloudStorage.getItem('game_accounts', (err, value) => {
-                    if (err || !value) { accounts = []; }
-                    else {
-                        try { accounts = JSON.parse(value); }
-                        catch (e) { accounts = []; }
+                tg.CloudStorage.getItems(['game_accounts', 'sold_accounts'], (err, result) => {
+                    if (err) {
+                        console.error('Ошибка загрузки:', err);
+                        accounts = [];
+                        soldAccounts = [];
+                    } else {
+                        try {
+                            accounts = result['game_accounts'] ? JSON.parse(result['game_accounts']) : [];
+                            soldAccounts = result['sold_accounts'] ? JSON.parse(result['sold_accounts']) : [];
+                        } catch (e) {
+                            console.error('Ошибка парсинга:', e);
+                            accounts = [];
+                            soldAccounts = [];
+                        }
                     }
                     resolve();
                 });
             });
         }
 
-        async function loadSoldAccounts() {
-            return new Promise((resolve) => {
-                tg.CloudStorage.getItem('sold_accounts', (err, value) => {
-                    if (err || !value) { soldAccounts = []; }
-                    else {
-                        try { soldAccounts = JSON.parse(value); }
-                        catch (e) { soldAccounts = []; }
-                    }
-                    resolve();
-                });
-            });
-        }
-
-        async function saveAccountsToStorage() {
-            tg.CloudStorage.setItem('game_accounts', JSON.stringify(accounts), (err) => {
-                if (err) console.error('Ошибка сохранения аккаунтов:', err);
-            });
-        }
-
-        async function saveSoldAccountsToStorage() {
-            tg.CloudStorage.setItem('sold_accounts', JSON.stringify(soldAccounts), (err) => {
-                if (err) console.error('Ошибка сохранения проданных:', err);
+        async function saveData() {
+            const items = {
+                'game_accounts': JSON.stringify(accounts),
+                'sold_accounts': JSON.stringify(soldAccounts)
+            };
+            tg.CloudStorage.setItems(items, (err) => {
+                if (err) {
+                    console.error('Ошибка сохранения:', err);
+                    tg.showAlert('Ошибка сохранения: ' + err);
+                } else {
+                    console.log('Данные успешно сохранены');
+                }
             });
         }
 
@@ -361,7 +293,6 @@
             document.getElementById('totalEarnings').textContent = totalEarnings.toLocaleString() + ' руб';
             document.getElementById('totalSold').textContent = soldAccounts.length;
             
-            // Chart
             const days = {};
             soldAccounts.forEach(acc => {
                 const date = new Date(acc.soldAt).toLocaleDateString();
@@ -370,7 +301,6 @@
             });
             
             const sortedDays = Object.entries(days).sort((a, b) => new Date(a[0]) - new Date(b[0])).slice(-7);
-            
             const maxValue = Math.max(...sortedDays.map(d => d[1]), 1);
             
             const chartHTML = sortedDays.map(([date, value]) => `
@@ -382,9 +312,7 @@
                 </div>
             `).join('');
             
-            document.getElementById('chartContainer').innerHTML = `
-                <div class="chart-bar">${chartHTML}</div>
-            `;
+            document.getElementById('chartContainer').innerHTML = `<div class="chart-bar">${chartHTML}</div>`;
         }
 
         async function saveAccount() {
@@ -410,7 +338,7 @@
             };
 
             accounts.unshift(newAccount);
-            await saveAccountsToStorage();
+            await saveData();
             
             document.getElementById('gamePassword').value = '';
             document.getElementById('gameEmail').value = '';
@@ -425,7 +353,6 @@
         function viewAccount(index, tab) {
             currentAccountId = index;
             currentTab = tab;
-            
             const acc = tab === 'list' ? accounts[index] : soldAccounts[index];
             const isSold = tab === 'sold';
             
@@ -467,10 +394,7 @@
                     acc.soldAt = new Date().toISOString();
                     soldAccounts.unshift(acc);
                     accounts.splice(currentAccountId, 1);
-                    
-                    await saveAccountsToStorage();
-                    await saveSoldAccountsToStorage();
-                    
+                    await saveData();
                     closeModal();
                     renderAccounts();
                     tg.showAlert('✅ Аккаунт отмечен как проданный!');
@@ -484,13 +408,12 @@
                 if (confirmed) {
                     if (currentTab === 'list') {
                         accounts.splice(currentAccountId, 1);
-                        await saveAccountsToStorage();
-                        renderAccounts();
                     } else {
                         soldAccounts.splice(currentAccountId, 1);
-                        await saveSoldAccountsToStorage();
-                        renderSoldAccounts();
                     }
+                    await saveData();
+                    if (currentTab === 'list') renderAccounts();
+                    else renderSoldAccounts();
                     closeModal();
                     tg.showAlert('🗑️ Аккаунт удалён');
                 }
@@ -504,8 +427,7 @@
         }
 
         (async () => {
-            await loadAccounts();
-            await loadSoldAccounts();
+            await loadData();
             renderAccounts();
         })();
     </script>
