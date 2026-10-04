@@ -870,10 +870,11 @@
             renderSoldAccounts();
         }
 
-        // ИСПРАВЛЕННОЕ СОХРАНЕНИЕ - используем setItems вместо setItem
+        // ИСПРАВЛЕННАЯ ЗАГРУЗКА
         async function loadData() {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 tg.CloudStorage.getItems(['xxxgl_accounts', 'xxxgl_sold'], (err, result) => {
+                    console.log('Загрузка данных...', err, result);
                     if (err) {
                         console.error('Ошибка загрузки:', err);
                         accounts = [];
@@ -881,17 +882,17 @@
                     } else {
                         accounts = result['xxxgl_accounts'] ? JSON.parse(result['xxxgl_accounts']) : [];
                         soldAccounts = result['xxxgl_sold'] ? JSON.parse(result['xxxgl_sold']) : [];
-                        console.log('Загружено аккаунтов:', accounts.length);
-                        console.log('Загружено проданных:', soldAccounts.length);
+                        console.log('Загружено аккаунтов:', accounts.length, 'Проданных:', soldAccounts.length);
                     }
                     resolve();
                 });
             });
         }
 
-        // ИСПРАВЛЕННОЕ СОХРАНЕНИЕ - используем setItems
+        // ИСПРАВЛЕННОЕ СОХРАНЕНИЕ
         async function saveData() {
             return new Promise((resolve, reject) => {
+                console.log('Сохранение данных...', accounts.length, soldAccounts.length);
                 tg.CloudStorage.setItems({
                     'xxxgl_accounts': JSON.stringify(accounts),
                     'xxxgl_sold': JSON.stringify(soldAccounts)
@@ -900,8 +901,7 @@
                         console.error('Ошибка сохранения:', err);
                         reject(err);
                     } else {
-                        console.log('Сохранено аккаунтов:', accounts.length);
-                        console.log('Сохранено проданных:', soldAccounts.length);
+                        console.log('Данные сохранены успешно!');
                         resolve();
                     }
                 });
@@ -1068,7 +1068,8 @@
                 tg.showAlert('✅ Аккаунт успешно сохранён!');
                 showAllList();
             } catch (err) {
-                tg.showAlert('❌ Ошибка сохранения: ' + err.message);
+                console.error('Ошибка:', err);
+                tg.showAlert('❌ Ошибка сохранения!');
             }
         }
 
@@ -1222,8 +1223,6 @@
                 }
             }
         });
-
-        document.getElementById('date').valueAsDate = new Date();
 
         (async () => {
             await loadData();
