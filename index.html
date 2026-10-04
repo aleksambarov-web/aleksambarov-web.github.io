@@ -191,7 +191,7 @@
         }
         .form-group { margin-bottom: 16px; }
         label { display: block; font-size: 14px; color: #555555; margin-bottom: 8px; font-weight: 600; }
-        input {
+        input, select {
             width: 100%; 
             padding: 14px 16px;
             border: 2px solid transparent;
@@ -202,7 +202,7 @@
             transition: all 0.3s;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
-        input:focus { 
+        input:focus, select:focus { 
             outline: none; 
             border-color: #3390ec;
             box-shadow: 0 4px 15px rgba(51, 144, 236, 0.25);
@@ -466,7 +466,6 @@
         .about-avatar {
             width: 120px;
             height: 120px;
-            border-radius: 50%;
             object-fit: cover;
             border: 3px solid #3390ec;
             box-shadow: 0 8px 30px rgba(51, 144, 236, 0.4);
@@ -560,6 +559,14 @@
             <h1 class="header-title">➕ Добавить аккаунт</h1>
             <div class="form-container">
                 <div class="form-group">
+                    <label>🎮 Игра</label>
+                    <select id="gameFolder">
+                        <option value="Genshin">Genshin Impact</option>
+                        <option value="HSR">Honkai: Star Rail</option>
+                        <option value="Honkai">Honkai Impact 3rd</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>🔑 Пароль от игры</label>
                     <input type="text" id="gamePassword" placeholder="Введите пароль">
                 </div>
@@ -607,6 +614,21 @@
                 <div class="stats-card">
                     <div class="stats-label">📦 Продано лотов</div>
                     <div class="stats-value" id="totalSold">0</div>
+                </div>
+            </div>
+            
+            <div class="stats-container" style="margin-top: 20px;">
+                <div class="stats-card">
+                    <div class="stats-label">🎮 Genshin</div>
+                    <div class="stats-value" id="genshinStats">0 ₽</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-label">🚂 HSR</div>
+                    <div class="stats-value" id="hsrStats">0 ₽</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-label">⚔️ Honkai</div>
+                    <div class="stats-value" id="honkaiStats">0 ₽</div>
                 </div>
             </div>
             
@@ -750,7 +772,7 @@
             container.innerHTML = accounts.map((acc, index) => `
                 <div class="account-card">
                     <div class="account-header">
-                        <div class="account-title">📦 ${escapeHtml(acc.lotName)}</div>
+                        <div class="account-title">📦 ${acc.folder || 'Genshin'} | ${escapeHtml(acc.lotName)}</div>
                         <div class="account-price">${escapeHtml(acc.price)}</div>
                     </div>
                     <div class="account-preview">📧 ${escapeHtml(acc.gameEmail)}</div>
@@ -771,7 +793,7 @@
             }
             container.innerHTML = soldAccounts.map((acc, index) => `
                 <div class="sold-card">
-                    <div class="sold-title">✅ ${escapeHtml(acc.lotName)}</div>
+                    <div class="sold-title">✅ ${acc.folder || 'Genshin'} | ${escapeHtml(acc.lotName)}</div>
                     <div class="account-preview">💰 ${escapeHtml(acc.price)} | 📅 ${new Date(acc.soldAt).toLocaleDateString()}</div>
                     <div class="account-actions">
                         <button class="btn-view" onclick="viewAccount(${index}, 'sold')">👁️ Просмотр</button>
@@ -788,9 +810,17 @@
                 return sum + price;
             }, 0);
             
-            document.getElementById('totalEarnings').textContent = soldAccounts.reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0).toLocaleString() + ' ₽';
+            const totalAll = soldAccounts.reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
+            const genshin = soldAccounts.filter(a => a.folder === 'Genshin').reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
+            const hsr = soldAccounts.filter(a => a.folder === 'HSR').reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
+            const honkai = soldAccounts.filter(a => a.folder === 'Honkai').reduce((s, a) => s + (parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0), 0);
+            
+            document.getElementById('totalEarnings').textContent = totalAll.toLocaleString() + ' ₽';
             document.getElementById('totalSold').textContent = soldAccounts.length;
             document.getElementById('periodEarnings').textContent = total.toLocaleString() + ' ₽';
+            document.getElementById('genshinStats').textContent = genshin.toLocaleString() + ' ₽';
+            document.getElementById('hsrStats').textContent = hsr.toLocaleString() + ' ₽';
+            document.getElementById('honkaiStats').textContent = honkai.toLocaleString() + ' ₽';
             
             const days = {};
             filtered.forEach(acc => {
@@ -815,6 +845,7 @@
         }
 
         async function saveAccount() {
+            const folder = document.getElementById('gameFolder').value;
             const gamePassword = document.getElementById('gamePassword').value.trim();
             const gameEmail = document.getElementById('gameEmail').value.trim();
             const emailPassword = document.getElementById('emailPassword').value.trim();
@@ -828,6 +859,7 @@
 
             accounts.unshift({
                 id: Date.now(),
+                folder,
                 gamePassword,
                 gameEmail,
                 emailPassword,
@@ -853,9 +885,15 @@
             currentTab = tab;
             const acc = tab === 'list' ? accounts[index] : soldAccounts[index];
             
-            document.getElementById('modalTitle').textContent = tab === 'sold' ? 'Проданный лот' : 'Детали аккаунта';
+            document.getElementById('modalTitle').textContent = (tab === 'sold' ? 'Проданный лот' : 'Детали аккаунта') + ' | ' + (acc.folder || 'Genshin');
             
             document.getElementById('modalDetails').innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-header">
+                        <div class="detail-label">🎮 Игра</div>
+                        <div class="detail-value">${acc.folder || 'Genshin'}</div>
+                    </div>
+                </div>
                 <div class="detail-row">
                     <div class="detail-header">
                         <div class="detail-label">🔑 Пароль от игры</div>
@@ -909,7 +947,7 @@
         function copyAll() {
             if (currentAccountId === null) return;
             const acc = currentTab === 'list' ? accounts[currentAccountId] : soldAccounts[currentAccountId];
-            const text = 'Пароль: ' + acc.gamePassword + '\nПочта: ' + acc.gameEmail + '\nПароль почты: ' + acc.emailPassword + '\nЛот: ' + acc.lotName + '\nЦена: ' + acc.price;
+            const text = 'Игра: ' + (acc.folder || 'Genshin') + '\nПароль: ' + acc.gamePassword + '\nПочта: ' + acc.gameEmail + '\nПароль почты: ' + acc.emailPassword + '\nЛот: ' + acc.lotName + '\nЦена: ' + acc.price;
             navigator.clipboard.writeText(text);
             tg.showAlert('📋 Всё скопировано!');
         }
